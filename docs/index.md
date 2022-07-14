@@ -266,14 +266,14 @@ container like:
 docker run --cap-add=SYS_ADMIN ...
 ```
 
-:warning: Please note that Mock run inside of Docker container skips unsharing
+:warning: Please note that Mock run inside of container skips unsharing
 of a namespace, so it runs in the same namespace as any other program in the
 same container.  That means you should not run any other application inside of
 that container.  Mock prints warning about this.  You can suppress this warning
 when you put in the config
 
 ```
-config_opts['docker_unshare_warning'] = False
+config_opts['container_unshare_warning'] = False
 ```
 
 ## FAQ

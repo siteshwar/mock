@@ -591,14 +591,14 @@ def groupcheck(unprivGid, tgtGid):
                            (name, ", ".join(members)))
 
 
-def running_in_docker():
+def running_in_container():
     """ Returns True if we are running inside of Docker container """
-    # Docker container has different cgroup than PID 1 of host.
-    # And have "docker" in that tree.
+    # Containers have different cgroup than PID 1 of host.
+    # And have "docker" or "crio" in that tree.
     with open('/proc/self/cgroup') as f:
         for line in f:
             items = line.split(':')
-            if 'docker' in items[2]:
+            if 'docker' in items[2] or 'crio' in items[2]:
                 return True
     return False
 
@@ -617,9 +617,9 @@ def unshare_namespace(config_opts):
             util.unshare(base_unshare_flags)
         except mockbuild.exception.UnshareFailed as e2:
             log.error("Namespace unshare failed.")
-            if running_in_docker() and not ('docker_unshare_warning' in config_opts and
-                                            config_opts['docker_unshare_warning']):
-                log.error("It seems we are running inside of Docker. Let skip unsharing.")
+            if running_in_container() and not ('container_unshare_warning' in config_opts and
+                                            config_opts['container_unshare_warning']):
+                log.error("It seems we are running inside a container. Let's skip unsharing.")
                 log.error("You should *not* run anything but Mock in this container. You have been warned!")
                 time.sleep(5)
             else:
